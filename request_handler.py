@@ -1,7 +1,15 @@
 import json
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from urllib.parse import urlparse, parse_qs
-from views import get_all_products
+from views import (
+    get_all_products,
+    get_single_product,
+    get_all_employees,
+    get_single_employee,
+    # create_employee,
+    # delete_employee,
+)
+from views import get_all_orders
 
 
 class HandleRequests(BaseHTTPRequestHandler):
@@ -54,9 +62,18 @@ class HandleRequests(BaseHTTPRequestHandler):
         (resource, id) = self.parse_url(self.path)
 
         if resource == "products":
-            response = get_all_products()
-        else:
-            response = []
+            if id is not None:
+                response = get_single_product(id)
+            else:
+                response = get_all_products()
+        if resource == "orders":
+            response = get_all_orders()
+
+        if resource == "employees":
+            if id is not None:
+                response = get_single_employee(id)
+            else:
+                response = get_all_employees()
 
         self.wfile.write(json.dumps(response).encode())
 
