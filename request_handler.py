@@ -4,12 +4,13 @@ from urllib.parse import urlparse, parse_qs
 from views import (
     get_all_products,
     get_single_product,
+    create_product,
     get_all_employees,
     get_single_employee,
-    # create_employee,
-    # delete_employee,
+    create_employee,
+    delete_employee,
 )
-from views import get_all_orders
+from views import get_all_orders, create_new_order, get_single_order
 
 
 class HandleRequests(BaseHTTPRequestHandler):
@@ -67,7 +68,10 @@ class HandleRequests(BaseHTTPRequestHandler):
             else:
                 response = get_all_products()
         if resource == "orders":
-            response = get_all_orders()
+            if id is not None:
+                response = get_single_order(id)
+            else:
+                response = get_all_orders()
 
         if resource == "employees":
             if id is not None:
@@ -79,12 +83,38 @@ class HandleRequests(BaseHTTPRequestHandler):
 
     def do_POST(self):
         """Make a post request to the server"""
+        content_len = int(self.headers.get("content-length", 0))
+        self._set_headers(201)
+        post_body = self.rfile.read(content_len)
+
+        post_body = json.loads(post_body)
+        (resource, id) = self.parse_url(self.path)
+
+        new_item = None
+
+        if resource == "products":
+            new_item = create_product(post_body)
+
+        if resource == "employees":
+            new_item = create_employee(post_body)
+
+        if resource == "orders":
+            new_item = create_new_order(post_body)
+
+        self.wfile.write(json.dumps(new_item).encode())
 
     def do_PUT(self):
         """Handles PUT requests to the server"""
 
     def do_DELETE(self):
         """Handle DELETE Requests"""
+        self._set_headers(204)
+        (resource, id) = self.parse_url(self.path)
+
+        if resource == "employees":
+            delete_employee(id)
+
+        self.wfile.write("".encode())
 
 
 def main():
