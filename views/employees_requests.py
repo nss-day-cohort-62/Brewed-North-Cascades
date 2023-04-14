@@ -29,7 +29,7 @@ def create_employee(employee):
     return employee
 
 
-def delete_employee():
+def delete_employee(id):
     employee_index = -1
 
     for index, employee in enumerate(EMPLOYEES):
