@@ -10,6 +10,14 @@ def get_all_employees():
 
 
 def get_single_employee(id):
+    """Gets a single employee
+
+    Args:
+        id (int): Integer listed as Id
+
+    Returns:
+        __dict__: employee
+    """
     requested_employee = None
 
     for employee in EMPLOYEES:
