@@ -79,6 +79,8 @@ class HandleRequests(BaseHTTPRequestHandler):
             else:
                 response = get_all_employees()
 
+        # NOTE: first change for git flow walkthrough
+
         self.wfile.write(json.dumps(response).encode())
 
     def do_POST(self):
