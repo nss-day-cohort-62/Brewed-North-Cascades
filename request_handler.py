@@ -81,6 +81,8 @@ class HandleRequests(BaseHTTPRequestHandler):
 
         # NOTE: first change for git flow walkthrough
 
+        # FIXME: Trying to cause merge conflict
+
         self.wfile.write(json.dumps(response).encode())
 
     def do_POST(self):
