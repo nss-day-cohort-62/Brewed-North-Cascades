@@ -81,6 +81,8 @@ class HandleRequests(BaseHTTPRequestHandler):
 
         # NOTE: first change for git flow walkthrough
 
+        # TODO: Need to update do_Get
+
         self.wfile.write(json.dumps(response).encode())
 
     def do_POST(self):
