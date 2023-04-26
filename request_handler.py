@@ -67,6 +67,7 @@ class HandleRequests(BaseHTTPRequestHandler):
                 response = get_single_product(id)
             else:
                 response = get_all_products()
+
         if resource == "orders":
             if id is not None:
                 response = get_single_order(id)

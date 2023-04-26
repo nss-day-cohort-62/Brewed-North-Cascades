@@ -36,27 +36,56 @@ def get_all_products():
     return products
 
 
-# def get_all_products():
-#     """GETS ALL PRODUCTS"""
-#     return PRODUCTS
-
-
 def get_single_product(id):
     """GETS A SINGLE PRODUCT"""
-    requested_product = None
+    """Filters down all rows in the product table to find the one with matching id"""
+    with sqlite3.connect("./brewed.sqlite3") as conn:
+        conn.row_factory = sqlite3.Row
+        db_cursor = conn.cursor()
 
-    for product in PRODUCTS:
-        if product["id"] == id:
-            requested_product = product
+        db_cursor.execute(
+            """
+        SELECT 
+        p.id,
+        p.name,
+        p.price
+        FROM Product p
+        """,
+            (id,),
+        )
 
-    return requested_product
+        # Load the single result into memory
+        data = db_cursor.fetchone()
+
+        # Create an animal instance from the current row
+        product = Product(data["id"], data["name"], data["price"])
+
+    return product.__dict__
 
 
-def create_product(product):
+def create_product(new_product):
     """CREATES A NEW PRODUCT"""
-    max_id = PRODUCTS[-1]["id"]
-    new_id = max_id + 1
-    product["id"] = new_id
-    PRODUCTS.append(product)
+    with sqlite3.connect("./brewed.sqlite3") as conn:
+        db_cursor = conn.cursor()
 
-    return product
+        db_cursor.execute(
+            """
+        INSERT INTO Product 
+        (name, price)
+        VALUES (? ?);
+
+         """,
+            (
+                new_product["name"],
+                new_product["price"],
+            ),
+        )
+
+        id = db_cursor.lastrowid
+
+        # Add the `id` property to the product dictionary that
+        # was sent by the client so that the client sees the
+        # primary key in the response.
+        new_product["id"] = id
+
+    return new_product

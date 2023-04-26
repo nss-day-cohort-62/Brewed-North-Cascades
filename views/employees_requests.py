@@ -1,3 +1,7 @@
+import sqlite3
+import json
+from models import Employee
+
 EMPLOYEES = [
     {"id": 1, "name": "Sally Summers", "email": "sally@summers.com", "hourly_rate": 20},
     {"id": 2, "name": "Wally Winters", "email": "wally@winters.com", "hourly_rate": 15},
@@ -6,24 +10,55 @@ EMPLOYEES = [
 
 
 def get_all_employees():
-    return EMPLOYEES
+    with sqlite3.connect("./brewed.sqlite3") as conn:
+        conn.row_factory = sqlite3.Row
+        db_cursor = conn.cursor()
+        db_cursor.execute(
+            """
+        SELECT 
+            e.id,
+            e.name,
+            e.email,
+            e.hourly_rate
+        FROM employee e
+        """
+        )
+        employees = []
+        dataset = db_cursor.fetchall()
+        for row in dataset:
+            employee = Employee(
+                row["id"], row["name"], row["email"], row["hourly_rate"]
+            )
+
+            employees.append(employee.__dict__)
+        return employees
 
 
 def get_single_employee(id):
-    """Gets a single employee
+    with sqlite3.connect("./brewed.sqlite3") as conn:
+        conn.row_factory = sqlite3.Row
+        db_cursor = conn.cursor()
 
-    Args:
-        id (int): Integer listed as Id
+        db_cursor.execute(
+            """
+        SELECT
+            e.id,
+            e.name,
+            e.email,
+            e.hourly_rate
+        FROM employee e
+        WHERE e.id = ?
+        """,
+            (id,),
+        )
 
-    Returns:
-        __dict__: employee
-    """
-    requested_employee = None
+        data = db_cursor.fetchone()
 
-    for employee in EMPLOYEES:
-        if employee["id"] == id:
-            requested_employee = employee
-    return requested_employee
+        employee = Employee(
+            data["id"], data["name"], data["email"], data["hourly_rate"]
+        )
+
+        return employee.__dict__
 
 
 def create_employee(employee):
