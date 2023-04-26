@@ -32,4 +32,28 @@ INSERT INTO `Order` VALUES (null, 1, 3, 19991222);
 INSERT INTO `Order` VALUES (null, 3, 2, 20010202);
 INSERT INTO `Order` VALUES (null, 2, 1, 20040120);
 
-SELECT * FROM `Order`
+SELECT 
+o.id, 
+o.timestamp,
+p.name
+FROM `Order` o
+Join `Product` p
+ON p.id = o.product_id
+
+SELECT 
+o.id, 
+o.timestamp,
+e.name
+FROM `Order` o
+Join `Employee` e
+ON e.id = o.employee_id
+
+SELECT * FROM `Product`;
+
+SELECT * 
+FROM `Product`
+WHERE id = 1
+
+
+DELETE FROM `Product`
+WHERE id = 3
