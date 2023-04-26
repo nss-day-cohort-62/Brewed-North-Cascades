@@ -50,6 +50,7 @@ def get_single_product(id):
         p.name,
         p.price
         FROM Product p
+        WHERE id = ?
         """,
             (id,),
         )
@@ -72,9 +73,9 @@ def create_product(new_product):
             """
         INSERT INTO Product 
         (name, price)
-        VALUES (? ?);
+        VALUES (?, ?);
 
-         """,
+        """,
             (
                 new_product["name"],
                 new_product["price"],
