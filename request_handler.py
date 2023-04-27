@@ -9,8 +9,11 @@ from views import (
     get_single_employee,
     create_employee,
     delete_employee,
+    get_all_orders,
+    create_new_order,
+    get_single_order,
+    delete_order,
 )
-from views import get_all_orders, create_new_order, get_single_order
 
 
 class HandleRequests(BaseHTTPRequestHandler):
@@ -119,6 +122,9 @@ class HandleRequests(BaseHTTPRequestHandler):
 
         if resource == "employees":
             delete_employee(id)
+
+        if resource == "orders":
+            delete_order(id)
 
         self.wfile.write("".encode())
 

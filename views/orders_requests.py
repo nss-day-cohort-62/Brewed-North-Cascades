@@ -66,10 +66,42 @@ def get_single_order(id):
     return order.__dict__
 
 
-def create_new_order(order):
+def create_new_order(new_order):
     "Function to create new orders"
-    max_id = ORDERS[-1]["id"]
-    new_id = max_id + 1
-    order["id"] = new_id
-    ORDERS.append(order)
-    return order
+    with sqlite3.connect("./brewed.sqlite3") as conn:
+        db_cursor = conn.cursor()
+
+        db_cursor.execute(
+            """
+        INSERT INTO `Order`
+        (product_id, employee_id, timestamp)
+        VALUES
+        (?,?,?);
+        """,
+            (
+                new_order["product_id"],
+                new_order["employee_id"],
+                new_order["timestamp"],
+            ),
+        )
+
+        id = db_cursor.lastrowid
+
+        new_order["id"] = id
+
+    return new_order
+
+
+def delete_order(id):
+    """Function to delete order object"""
+
+    with sqlite3.connect("./brewed.sqlite3") as conn:
+        db_cursor = conn.cursor()
+
+        db_cursor.execute(
+            """
+        DELETE FROM `Order`
+        WHERE id = ?
+        """,
+            (id,),
+        )
