@@ -31,7 +31,7 @@ def get_all_employees():
             )
 
             employees.append(employee.__dict__)
-        return employees
+    return employees
 
 
 def get_single_employee(id):
@@ -58,26 +58,40 @@ def get_single_employee(id):
             data["id"], data["name"], data["email"], data["hourly_rate"]
         )
 
-        return employee.__dict__
+    return employee.__dict__
 
 
-def create_employee(employee):
-    max_id = EMPLOYEES[-1]["id"]
+def create_employee(new_employee):
+    with sqlite3.connect("./brewed.sqlite3") as conn:
+        db_cursor = conn.cursor()
+        db_cursor.execute(
+            """
+            INSERT INTO Employee 
+                ( name, email, hourly_rate )
+            VALUES 
+                ( ?, ?, ? );
+            """,
+            (
+                new_employee["name"],
+                new_employee["email"],
+                new_employee["hourly_rate"],
+            ),
+        )
+        id = db_cursor.lastrowid
 
-    new_id = max_id + 1
-    employee["id"] = new_id
+        new_employee["id"] = id
 
-    EMPLOYEES.append(employee)
-
-    return employee
+    return new_employee
 
 
 def delete_employee(id):
-    employee_index = -1
+    with sqlite3.connect("./brewed.sqlite3") as conn:
+        db_cursor = conn.cursor()
 
-    for index, employee in enumerate(EMPLOYEES):
-        if employee["id"] == id:
-            employee_index = index
-
-    if employee_index >= 0:
-        EMPLOYEES.pop(employee_index)
+        db_cursor.execute(
+            """
+        DELETE FROM employee
+        WHERE id = ?
+        """,
+            (id,),
+        )

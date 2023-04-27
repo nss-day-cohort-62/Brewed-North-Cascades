@@ -1,4 +1,9 @@
-from .orders_requests import get_all_orders, create_new_order, get_single_order
+from .orders_requests import (
+    get_all_orders,
+    create_new_order,
+    get_single_order,
+    delete_order
+)
 from .employees_requests import (
     get_all_employees,
     get_single_employee,
